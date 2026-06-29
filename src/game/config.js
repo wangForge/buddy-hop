@@ -1,0 +1,160 @@
+export const CLAWD_HEIGHT_RATIO = 0.42;
+export const MIN_CLAWD_HEIGHT = 120;
+export const MAX_CLAWD_HEIGHT = 520;
+export const CLAWD_SCENE_SCALE = 1 / 3;
+export const CLAWD_ASPECT_RATIO = 274 / 178;
+export const CLAWD_TOP_PADDING_RATIO = 8.74 / 178;
+export const CLAWD_BOTTOM_PADDING_RATIO = (178 - 172.77) / 178;
+
+export const PLATFORM_VISUAL_THICKNESS_MIN = 8;
+export const PLATFORM_VISUAL_THICKNESS_MULTIPLIER = 2.4;
+
+export const BASELINE_ANIMATION_FPS = 30;
+export const INTRO_HOLD_FRAMES = 4;
+export const ANTICIPATION_DURATION_FRAMES = 6;
+export const ANTICIPATION_HOLD_FRAMES = 2;
+export const SQUAT_RELEASE_FRAMES = 2;
+export const TAKEOFF_SMEAR_DURATION_FRAMES = 4;
+export const ASCENT_DURATION_FRAMES = 10;
+export const HANGTIME_DURATION_FRAMES = 10;
+export const DESCENT_DURATION_FRAMES = 4;
+export const LANDING_SQUASH_DURATION_FRAMES = 3;
+export const LANDING_RECOVERY_DURATION_FRAMES = 5;
+
+export const ASCENT_END_X_RATIO = 0.62;
+export const HANGTIME_END_X_RATIO = 0.69;
+export const ANTICIPATION_SCALE_X = 1.12;
+export const ANTICIPATION_SCALE_Y = 0.77;
+export const LANDING_SCALE_X = 1.15;
+export const LANDING_SCALE_Y = 0.7;
+export const LANDING_MAX_SCALE_X = 1.22;
+export const LANDING_MIN_SCALE_Y = 0.58;
+export const LANDING_IMPACT_REFERENCE_SPEED_RATIO = 0.48;
+export const LANDING_IMPACT_FALLBACK_REFERENCE_SPEED = 40;
+export const LANDING_IMPACT_MIN_RATIO = 0.35;
+export const LANDING_IMPACT_MAX_RATIO = 1.35;
+
+export const LOW_CLEARANCE_ASCENT_END_X_RATIO = 0.82;
+export const LOW_CLEARANCE_HANGTIME_END_X_RATIO = 0.94;
+export const LOW_CLEARANCE_FULL_HEIGHT_RATIO = 0.18;
+export const LOW_CLEARANCE_FULL_HEIGHT_MIN = 10;
+export const LOW_CLEARANCE_FULL_HEIGHT_MAX = 26;
+export const LOW_CLEARANCE_BLEND_OUT_MULTIPLIER = 4;
+
+export const FAST_SEGMENT_SPEED_RATIO = 1.9;
+export const SLOW_MOTION_SPEED_RATIO = 0.55;
+export const EXIT_ACCELERATION_START_PROGRESS = 0.5;
+export const EXIT_ACCELERATION_POWER = 4;
+export const HANGTIME_ARC_LENGTH_SAMPLES = 24;
+export const HANGTIME_ARC_PROGRESS_SEARCH_STEPS = 20;
+export const HANGTIME_SPEED_SAMPLE_PROGRESS = 0.001;
+
+export const TAKEOFF_SMEAR_MAX_OPACITY = 0.34;
+export const TAKEOFF_SMEAR_MAX_EXTRA_SCALE_Y = 1.6;
+export const TAKEOFF_SMEAR_MAX_SKEW_DEGREES = -11;
+export const TAKEOFF_SMEAR_VISIBLE_MIN_SPEED_RATIO = 0.68;
+export const TAKEOFF_SMEAR_VISIBLE_FULL_SPEED_RATIO = 0.96;
+export const TAKEOFF_SMEAR_VISIBLE_SPEED_POWER = 1.35;
+export const TAKEOFF_SMEAR_SHAPE_MIN_SPEED_RATIO = 0.34;
+export const TAKEOFF_SMEAR_SHAPE_FULL_SPEED_RATIO = 0.82;
+export const TAKEOFF_SMEAR_SHAPE_SPEED_POWER = 1.15;
+export const SMEAR_VERTICAL_DIRECTION_EPSILON = 1;
+
+export const VELOCITY_SAMPLE_OFFSET_FRAMES = 0.25;
+export const VELOCITY_STRETCH_MIN_SPEED = 8;
+export const VELOCITY_STRETCH_FULL_SPEED = 140;
+export const VELOCITY_STRETCH_MAX_ALONG_SCALE = 0.1;
+export const VELOCITY_STRETCH_MAX_ACROSS_SQUASH = 0.03;
+
+export const ARM_REST_SWING_DEGREES = 0;
+export const ARM_TAKEOFF_DOWN_SWING_DEGREES = 38;
+export const ARM_ARC_CENTER_UP_SWING_DEGREES = -24;
+export const ARM_MAX_UP_SWING_DEGREES = -42;
+export const ARM_LANDING_DOWN_SWING_DEGREES = 30;
+export const ARM_DESCENT_LAG_PROGRESS = 0.18;
+export const ARM_FULL_LANDING_IMPACT_RATIO = 1;
+export const ARM_PIVOTS = {
+  left: { x: 48.9, y: 58.45 },
+  right: { x: 224, y: 58.45 },
+};
+
+export const CHARGE_MAX_MS = 1000;
+export const CHARGE_FULL_HOLD_FRAMES = 4;
+export const CHARGE_FULL_HOLD_MS =
+  (CHARGE_FULL_HOLD_FRAMES / BASELINE_ANIMATION_FPS) * 1000;
+export const CHARGE_MIN_LIFT_RATIO = 0.12;
+export const CHARGE_MAX_LIFT_RATIO = 0.7;
+export const CHARGE_METER_HEIGHT_RATIO = 0.72;
+export const CHARGE_METER_WIDTH_RATIO = 0.05;
+export const CHARGE_METER_GAP_RATIO = 0.1;
+export const CHARGE_METER_STAGE_PADDING = 4;
+export const CHARGE_PERFECT_CLEARANCE_RATIO = 0.08;
+export const CHARGE_COLOR_LOW = "#0ea5e9";
+export const CHARGE_COLOR_PERFECT = "#16a34a";
+export const CHARGE_COLOR_HIGH = "#f97316";
+export const CHARGE_COLOR_TOP = "#e11d48";
+export const CHALLENGE_MODE_CHARGE_INITIAL_SPEED_MULTIPLIER = 2;
+export const CHALLENGE_MODE_DRIFT_INITIAL_SPEED_RATIO = 0.2;
+
+export const SPIKE_HEIGHT_RATIO = 0.07;
+export const SPIKE_HEIGHT_MIN = 24;
+export const SPIKE_HEIGHT_MAX = 54;
+export const SPIKE_WIDTH_TO_HEIGHT_RATIO = 1.18;
+
+export const TOP_DEATH_IMPACT_HOLD_FRAMES = 10;
+export const TOP_DEATH_FALL_FRAMES = 16;
+export const TOP_DEATH_FALL_DISTANCE_RATIO = 0.22;
+export const TOP_DEATH_FALL_TILT_DEGREES = 16;
+export const TOP_DEATH_DURATION_FRAMES =
+  TOP_DEATH_IMPACT_HOLD_FRAMES + TOP_DEATH_FALL_FRAMES;
+
+export const BOTTOM_DEATH_FALL_FRAMES = 16;
+export const BOTTOM_DEATH_HOLD_FRAMES = 12;
+export const BOTTOM_DEATH_DURATION_FRAMES = BOTTOM_DEATH_HOLD_FRAMES;
+export const BOTTOM_DEATH_FALL_TILT_DEGREES = 10;
+
+export const CAMERA_SETTLE_DURATION_MS = 180;
+export const RESPAWN_FLASH_DURATION_MS = 360;
+export const CURRENT_SURFACE_RATIO = 0.16;
+export const CHALLENGE_CURRENT_SURFACE_RATIO = 0.35;
+export const JUMP_HANGTIME_LIFT_RATIO = 0.006;
+
+export const TARGET_HORIZONTAL_DISTANCE_MIN_RATIO = 0.18;
+export const TARGET_HORIZONTAL_DISTANCE_MAX_RATIO = 0.48;
+export const TARGET_VERTICAL_GAP_MIN_RATIO = 0.31;
+export const TARGET_VERTICAL_GAP_MAX_RATIO = 0.42;
+export const CHALLENGE_TARGET_HORIZONTAL_DISTANCE_MIN_RATIO = 0.22;
+export const CHALLENGE_TARGET_HORIZONTAL_DISTANCE_MAX_RATIO = 0.54;
+export const CHALLENGE_TARGET_VERTICAL_GAP_MIN_RATIO = 0.25;
+export const CHALLENGE_TARGET_VERTICAL_GAP_MAX_RATIO = 0.52;
+export const PLATFORM_WIDTH_MIN_RATIO = 0.17;
+export const PLATFORM_WIDTH_MAX_RATIO = 0.3;
+export const PLATFORM_SURFACE_MIN_RATIO = 0.13;
+export const PLATFORM_SURFACE_MAX_RATIO = 0.62;
+
+export const getClawdJumpTimingFrames = () => {
+  const jumpStartFrame =
+    ANTICIPATION_DURATION_FRAMES + ANTICIPATION_HOLD_FRAMES;
+  const ascentEndFrame = jumpStartFrame + ASCENT_DURATION_FRAMES;
+  const hangtimeEndFrame = ascentEndFrame + HANGTIME_DURATION_FRAMES;
+  const landingFrame = hangtimeEndFrame + DESCENT_DURATION_FRAMES;
+  const exitAccelerationStartFrame =
+    ascentEndFrame + HANGTIME_DURATION_FRAMES * EXIT_ACCELERATION_START_PROGRESS;
+  const landingSquashEndFrame = landingFrame + LANDING_SQUASH_DURATION_FRAMES;
+  const landingRecoveryEndFrame =
+    landingSquashEndFrame + LANDING_RECOVERY_DURATION_FRAMES;
+
+  return {
+    jumpStartFrame,
+    ascentEndFrame,
+    hangtimeEndFrame,
+    landingFrame,
+    exitAccelerationStartFrame,
+    landingSquashEndFrame,
+    landingRecoveryEndFrame,
+  };
+};
+
+export const CLAWD_JUMP_TIMING = getClawdJumpTimingFrames();
+export const CYCLE_DURATION_FRAMES =
+  INTRO_HOLD_FRAMES + CLAWD_JUMP_TIMING.landingRecoveryEndFrame;

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>Jumping Clawd</title>
+    <link rel="stylesheet" href="/src/game/styles.css" />
+  </head>
+  <body>
+    <main class="app" aria-label="Clawd jump game">
+      <section class="stage" data-stage aria-label="Clawd jump game stage">
+        <div class="score" data-score aria-hidden="true">score: 0</div>
+
+        <div class="spikes spikes--top" data-spikes aria-hidden="true">
+          <svg data-spikes-svg xmlns="http://www.w3.org/2000/svg" focusable="false">
+            <path data-spikes-path></path>
+          </svg>
+        </div>
+
+        <div class="spikes spikes--bottom" data-bottom-spikes aria-hidden="true">
+          <svg data-bottom-spikes-svg xmlns="http://www.w3.org/2000/svg" focusable="false">
+            <path data-bottom-spikes-path></path>
+          </svg>
+        </div>
+
+        <div class="charge-meter" data-charge-meter aria-hidden="true">
+          <div class="charge-meter__fill" data-charge-fill></div>
+        </div>
+
+        <div
+          class="controls-hint"
+          data-controls-hint
+          role="status"
+          aria-label="按空格蓄力，松空格跳跃"
+          hidden
+        >
+          <span>按空格蓄力</span>
+          <span>松空格跳跃</span>
+        </div>
+
+        <div class="clawd-layer clawd-layer--smear" data-clawd-smear aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 274 178" focusable="false">
+            <g data-left-arm-smear>
+              <path d="M9.23 42.62H48.9V74.28H9.23V42.62Z" fill="#DA7756" />
+            </g>
+            <g data-right-arm-smear>
+              <path d="M224 42.62H264.17V74.28H224V42.62Z" fill="#DA7756" />
+            </g>
+            <path d="M40.9 8.74H232.5V136.59H40.9V8.74Z" fill="#DA7756" />
+            <path d="M57.4 144.59H72.79V172.77H57.4V144.59Z" fill="#DA7756" />
+            <path d="M89.29 144.59H105.05V172.77H89.29V144.59Z" fill="#DA7756" />
+            <path d="M168.67 144.59H184.27V172.77H168.67V144.59Z" fill="#DA7756" />
+            <path d="M200.04 144.59H215.22V172.77H200.04V144.59Z" fill="#DA7756" />
+          </svg>
+        </div>
+
+        <div class="clawd-layer clawd-layer--body" data-clawd-body aria-hidden="true">
+          <div class="clawd-velocity" data-clawd-velocity>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 274 178" focusable="false">
+              <g data-left-arm>
+                <path d="M9.23 42.62H48.9V74.28H9.23V42.62Z" fill="#DA7756" />
+              </g>
+              <g data-right-arm>
+                <path d="M224 42.62H264.17V74.28H224V42.62Z" fill="#DA7756" />
+              </g>
+              <path d="M40.9 8.74H232.5V136.59H40.9V8.74Z" fill="#DA7756" />
+              <path d="M57.4 144.59H72.79V172.77H57.4V144.59Z" fill="#DA7756" />
+              <path d="M89.29 144.59H105.05V172.77H89.29V144.59Z" fill="#DA7756" />
+              <path d="M168.67 144.59H184.27V172.77H168.67V144.59Z" fill="#DA7756" />
+              <path d="M200.04 144.59H215.22V172.77H200.04V144.59Z" fill="#DA7756" />
+              <path class="clawd-eye" d="m73.24 42.62h16.26v30.66h-16.26v-30.66z" fill="#000" />
+              <path class="clawd-eye" d="m183.9 42.62h16.26v30.66h-16.26v-30.66z" fill="#000" />
+              <g class="clawd-dead-eyes">
+                <path d="M72.25 41.5L90.5 74.4" />
+                <path d="M90.5 41.5L72.25 74.4" />
+                <path d="M182.9 41.5L201.15 74.4" />
+                <path d="M201.15 41.5L182.9 74.4" />
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="platform" data-platform="a" aria-hidden="true"></div>
+        <div class="platform" data-platform="b" aria-hidden="true"></div>
+        <div class="platform" data-platform="c" aria-hidden="true"></div>
+        <div class="platform" data-platform="d" aria-hidden="true"></div>
+        <div class="platform" data-platform="e" aria-hidden="true"></div>
+
+        <div
+          class="game-over"
+          data-game-over
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="game-over-title"
+          hidden
+        >
+          <div class="game-over__panel">
+            <section class="game-over__leaderboard" aria-labelledby="game-over-title">
+              <h2 id="game-over-title">排行榜</h2>
+              <ol class="game-over__rank-list" data-rank-list></ol>
+            </section>
+            <form class="game-over__submit" data-score-form>
+              <div class="game-over__submit-body">
+                <label class="game-over__field">
+                  <input
+                    data-player-name
+                    type="text"
+                    maxlength="24"
+                    autocomplete="off"
+                    inputmode="text"
+                    aria-label="输入你的大名"
+                  />
+                </label>
+                <strong class="game-over__final-score" data-final-score>0</strong>
+                <button class="game-over__send" data-submit-score type="submit" aria-label="上榜">
+                  上榜👆
+                </button>
+              </div>
+            </form>
+            <div class="game-over__actions">
+              <button class="game-over__button game-over__button--primary" data-retry-game type="button">
+                再来一次
+              </button>
+              <button class="game-over__button game-over__button--secondary" data-exit-game type="button">
+                退出
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/game/app.js"></script>
+  </body>
+</html>
