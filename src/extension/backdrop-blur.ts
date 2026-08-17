@@ -5,7 +5,7 @@ export const MIN_BACKDROP_BLUR_PX = 0;
 export const MAX_BACKDROP_BLUR_PX = 20;
 export const BACKDROP_BLUR_STEP_PX = 1;
 
-const BACKDROP_BLUR_STORAGE_KEY = 'jumping-clawd:backdrop-blur-px';
+const BACKDROP_BLUR_STORAGE_KEY = 'buddy-hop:backdrop-blur-px';
 
 export const normalizeBackdropBlur = (value: unknown) => {
   const numericValue =

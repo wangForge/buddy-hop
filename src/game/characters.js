@@ -7,7 +7,7 @@ import {
 
 export const DEFAULT_CHARACTER_ID = 'crab';
 
-const CHARACTER_STORAGE_KEY = 'jumping-clawd:character-id';
+const CHARACTER_STORAGE_KEY = 'buddy-hop:character-id';
 
 // The game layer runs as a plain ES module inside the extension page
 // (game.html), so `wxt/browser` is unavailable there. The `chrome.*` API

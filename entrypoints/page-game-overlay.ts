@@ -19,13 +19,13 @@ import {
 } from '../src/extension/messages';
 
 const GAME_PAGE = '/game.html';
-const OVERLAY_ID = 'jumping-clawd-game-overlay';
+const OVERLAY_ID = 'buddy-hop-game-overlay';
 const PAGE_SURFACE_SEARCH_PARAM = 'surface';
 const GAME_MODE_SEARCH_PARAM = 'mode';
 const AUTO_PLAY_TOGGLE_MESSAGE_TYPE = 'toggle-auto-play';
 const AUTO_PLAY_STATE_MESSAGE_TYPE = 'auto-play-state';
 const CONTRAST_SWITCH_LUMINANCE = 0.179;
-const CLEANUP_GLOBAL_KEY = '__jumpingClawdOverlayCleanup__';
+const CLEANUP_GLOBAL_KEY = '__buddyHopOverlayCleanup__';
 const BLOCKED_PAGE_INPUT_EVENTS = [
   'beforeinput',
   'input',
@@ -82,14 +82,14 @@ const isSetBackdropBlurMessage = (
 
 const isGameFrameCloseMessage = (message: unknown) =>
   isObject(message) &&
-  message.source === 'jumping-clawd-game' &&
+  message.source === 'buddy-hop-game' &&
   message.type === 'close-game';
 
 const isGameFrameAutoPlayStateMessage = (
   message: unknown,
 ): message is { autoPlay: boolean } =>
   isObject(message) &&
-  message.source === 'jumping-clawd-game' &&
+  message.source === 'buddy-hop-game' &&
   message.type === AUTO_PLAY_STATE_MESSAGE_TYPE &&
   typeof message.autoPlay === 'boolean';
 
@@ -124,7 +124,7 @@ const isAutoPlayToggleShortcut = (event: KeyboardEvent) =>
 const requestGameAutoPlayToggle = () => {
   overlayFrame?.contentWindow?.postMessage(
     {
-      source: 'jumping-clawd-overlay',
+      source: 'buddy-hop-overlay',
       type: AUTO_PLAY_TOGGLE_MESSAGE_TYPE,
     },
     '*',
@@ -460,7 +460,7 @@ const getGamePageUrl = (
 
 const applyBackdropBlur = () => {
   overlayHost?.style.setProperty(
-    '--jumping-clawd-backdrop-blur',
+    '--buddy-hop-backdrop-blur',
     `${backdropBlurPx}px`,
   );
 };
@@ -476,7 +476,7 @@ const loadBackdropBlur = () => {
   backdropBlurLoad ??= getStoredBackdropBlur()
     .then(setBackdropBlur)
     .catch((error) => {
-      console.warn('Failed to load Jumping Clawd backdrop blur setting', error);
+      console.warn('Failed to load Buddy Hop backdrop blur setting', error);
       return backdropBlurPx;
     });
 
@@ -542,7 +542,7 @@ const closeGameOverlay = () => {
 const createOverlayHost = (gameMode: GameMode) => {
   const host = document.createElement('div');
   host.id = OVERLAY_ID;
-  host.style.setProperty('--jumping-clawd-backdrop-blur', `${backdropBlurPx}px`);
+  host.style.setProperty('--buddy-hop-backdrop-blur', `${backdropBlurPx}px`);
   setImportantStyle(host, 'position', 'fixed');
   setImportantStyle(host, 'inset', '0');
   setImportantStyle(host, 'width', '100vw');
@@ -573,8 +573,8 @@ const createOverlayHost = (gameMode: GameMode) => {
         background:
           linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08)),
           rgba(255, 255, 255, 0.12);
-        -webkit-backdrop-filter: blur(var(--jumping-clawd-backdrop-blur, 2px)) saturate(1.1);
-        backdrop-filter: blur(var(--jumping-clawd-backdrop-blur, 2px)) saturate(1.1);
+        -webkit-backdrop-filter: blur(var(--buddy-hop-backdrop-blur, 2px)) saturate(1.1);
+        backdrop-filter: blur(var(--buddy-hop-backdrop-blur, 2px)) saturate(1.1);
       }
 
       iframe {
@@ -590,14 +590,14 @@ const createOverlayHost = (gameMode: GameMode) => {
     </style>
     <div class="overlay">
       <div class="backdrop"></div>
-      <iframe title="Jumping Clawd game" allowtransparency="true"></iframe>
+      <iframe title="Buddy Hop game" allowtransparency="true"></iframe>
     </div>
   `;
 
   const iframe = shadow.querySelector<HTMLIFrameElement>('iframe');
 
   if (!iframe) {
-    throw new Error('Failed to create Jumping Clawd overlay');
+    throw new Error('Failed to create Buddy Hop overlay');
   }
 
   iframe.src = getGamePageUrl(getPageSurfaceTheme(), gameMode);

@@ -1,6 +1,6 @@
 {
-  "name": "jumping-clawd",
-  "description": "Jumping Clawd browser extension",
+  "name": "buddy-hop",
+  "description": "Buddy Hop browser extension",
   "private": true,
   "version": "0.1.1",
   "type": "module",

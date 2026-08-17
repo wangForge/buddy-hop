@@ -10,11 +10,11 @@ const extensionIcon = {
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   manifest: {
-    name: 'Jumping Clawd',
-    short_name: 'Clawd Jump',
+    name: 'Buddy Hop',
+    short_name: 'Buddy Hop',
     description: 'Jump while you wait — 网页等待时来局跳一跳',
     action: {
-      default_title: 'Jumping Clawd',
+      default_title: 'Buddy Hop',
       default_icon: extensionIcon,
     },
     permissions: ['activeTab', 'scripting', 'storage'],
@@ -26,19 +26,19 @@ export default defineConfig({
       },
     ],
     commands: {
-      'jumping-clawd-open-casual-game': {
+      'buddy-hop-open-casual-game': {
         suggested_key: {
           default: 'Ctrl+Comma',
           mac: 'MacCtrl+Comma',
         },
-        description: 'Start Jumping Clawd casual mode on the current page',
+        description: 'Start Buddy Hop casual mode on the current page',
       },
-      'jumping-clawd-open-challenge-game': {
+      'buddy-hop-open-challenge-game': {
         suggested_key: {
           default: 'Ctrl+Period',
           mac: 'MacCtrl+Period',
         },
-        description: 'Start Jumping Clawd challenge mode on the current page',
+        description: 'Start Buddy Hop challenge mode on the current page',
       },
     },
   },

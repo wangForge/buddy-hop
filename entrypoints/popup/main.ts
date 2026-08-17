@@ -34,7 +34,7 @@ if (!app) {
 }
 
 app.innerHTML = `
-  <main class="popup" aria-label="Jumping Clawd">
+  <main class="popup" aria-label="Buddy Hop">
     <header class="popup-header">
       <div class="mascot-mark" aria-hidden="true">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 274 178" focusable="false">
@@ -50,7 +50,7 @@ app.innerHTML = `
         </svg>
       </div>
       <div class="brand-copy">
-        <h1>Jumping Clawd</h1>
+        <h1>Buddy Hop</h1>
         <p>在当前页面跳一跳</p>
       </div>
     </header>
@@ -246,7 +246,7 @@ const sendBackdropBlurToActiveTab = async (blurPx: number) => {
     });
   } catch (error) {
     if (!isMissingReceiverError(error)) {
-      console.warn('Failed to update Jumping Clawd backdrop blur', error);
+      console.warn('Failed to update Buddy Hop backdrop blur', error);
     }
   }
 };
@@ -256,7 +256,7 @@ const handleBackdropBlurInput = () => {
   const blurPx = setBackdropBlurControlValue(backdropBlurSlider.value);
 
   void saveStoredBackdropBlur(blurPx).catch((error) => {
-    console.warn('Failed to save Jumping Clawd backdrop blur setting', error);
+    console.warn('Failed to save Buddy Hop backdrop blur setting', error);
   });
   void sendBackdropBlurToActiveTab(blurPx);
 };
@@ -268,7 +268,7 @@ void getStoredBackdropBlur()
     }
   })
   .catch((error) => {
-    console.warn('Failed to load Jumping Clawd backdrop blur setting', error);
+    console.warn('Failed to load Buddy Hop backdrop blur setting', error);
   });
 
 const syncGameState = async () => {
@@ -282,7 +282,7 @@ const syncGameState = async () => {
     currentAutoPlayEnabled = isGameOpen ? state.autoPlay === true : false;
     setStatus(isGameOpen ? getOpenStatus() : '');
   } catch (error) {
-    console.warn('Failed to read Jumping Clawd game state', error);
+    console.warn('Failed to read Buddy Hop game state', error);
     isGameOpen = false;
     currentGameMode = null;
     currentAutoPlayEnabled = false;
@@ -311,7 +311,7 @@ const handleStartGame = async (mode: GameMode) => {
     setStatus(getOpenStatus());
     window.close();
   } catch (error) {
-    console.warn('Failed to open Jumping Clawd game', error);
+    console.warn('Failed to open Buddy Hop game', error);
     isGameOpen = false;
     currentGameMode = null;
     currentAutoPlayEnabled = false;
@@ -338,7 +338,7 @@ const handleExitGame = async () => {
     currentAutoPlayEnabled = state.isOpen ? state.autoPlay === true : false;
     setStatus(state.state === 'already-closed' ? '游戏未打开' : '已退出');
   } catch (error) {
-    console.warn('Failed to close Jumping Clawd game', error);
+    console.warn('Failed to close Buddy Hop game', error);
     setStatus('当前页面无法退出游戏');
   } finally {
     pendingAction = null;
@@ -380,7 +380,7 @@ characterButtons.forEach((button) => {
 
     setCharacterSelection(id);
     void saveStoredCharacterId(id).catch((error) => {
-      console.warn('Failed to save Jumping Clawd character', error);
+      console.warn('Failed to save Buddy Hop character', error);
     });
   });
 });
@@ -388,7 +388,7 @@ characterButtons.forEach((button) => {
 void getStoredCharacterId()
   .then(setCharacterSelection)
   .catch((error) => {
-    console.warn('Failed to load Jumping Clawd character', error);
+    console.warn('Failed to load Buddy Hop character', error);
     setCharacterSelection(DEFAULT_CHARACTER_ID);
   });
 

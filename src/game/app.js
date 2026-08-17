@@ -240,9 +240,9 @@ const game = {
 
 const RANK_VISIBLE_ROWS = 5;
 const RANK_ENTRY_LIMIT = 10;
-const PLAYER_NAME_STORAGE_KEY = "jumping-clawd:player-name";
+const PLAYER_NAME_STORAGE_KEY = "buddy-hop:player-name";
 const CONTROLS_HINT_STORAGE_KEY_PREFIX =
-  "jumping-clawd:controls-hint-shown";
+  "buddy-hop:controls-hint-shown";
 
 const claimFirstControlsHintForMode = () => {
   const storageKey = `${CONTROLS_HINT_STORAGE_KEY_PREFIX}:${gameMode}`;
@@ -2306,7 +2306,7 @@ const requestOverlayClose = () => {
 
   window.parent.postMessage(
     {
-      source: "jumping-clawd-game",
+      source: "buddy-hop-game",
       type: "close-game",
     },
     "*",
@@ -2332,7 +2332,7 @@ const postAutoPlayState = () => {
 
   window.parent.postMessage(
     {
-      source: "jumping-clawd-game",
+      source: "buddy-hop-game",
       type: AUTO_PLAY_STATE_MESSAGE_TYPE,
       autoPlay: autoPlayEnabled,
     },
@@ -2486,7 +2486,7 @@ window.addEventListener("message", (event) => {
   if (
     !message ||
     typeof message !== "object" ||
-    message.source !== "jumping-clawd-overlay" ||
+    message.source !== "buddy-hop-overlay" ||
     message.type !== AUTO_PLAY_TOGGLE_MESSAGE_TYPE
   ) {
     return;
