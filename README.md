@@ -1,8 +1,17 @@
-![Jumping Clawd](https://img.laosunwendao.com/skill-uploads/e70a2316aaa24c0e972fe920e89e260c.png)
+# Buddy Hop
 
-# Jumping Clawd
+Buddy Hop 是一个基于 [WXT](https://wxt.dev/) 的浏览器扩展小游戏，玩法类似"跳一跳"：按住空格蓄力、松开跳跃，控制你选中的小伙伴在平台间不断跳跃得分。
 
-Jumping Clawd 是一个基于 [WXT](https://wxt.dev/) 的浏览器扩展小游戏。它可以在当前网页上以遮罩层形式启动，也可以在空白页、新标签页等场景下打开独立游戏页。
+它既可以以遮罩层形式覆盖在当前网页上玩，也可以在空白页、新标签页等场景下打开独立游戏页。扩展显示名目前仍为 **Jumping Clawd**。
+
+## 特性
+
+- **角色自定义**：内置蟹、机器人、小狗、卡皮巴拉四个角色，在扩展弹窗中一键切换，游戏内即时生效（无需重开游戏）。
+- **双模式**：休闲模式（相机跟随，失败后就近平台复活）与挑战模式（画面持续上移、一失误即结算并可提交排行榜）。
+- **双死亡机制**：顶部尖刺与底部尖刺，跳跃力度需要精确把控。
+- **自动 play**：`Ctrl+A` 切换，内置"安全跳跃规划"自动代玩。
+- **页面自适应**：遮罩模式自动采样页面背景亮度，切换明暗主题。
+- **在线排行榜**：挑战模式结束后提交分数，Supabase 云端榜单。
 
 ## 开发环境
 
@@ -52,17 +61,24 @@ npm run zip:firefox
 | --- | --- |
 | `wxt.config.ts` | 扩展 manifest 配置，包括权限、图标、快捷键、可访问资源。 |
 | `entrypoints/background.ts` | 后台脚本，负责响应扩展快捷键并打开游戏。 |
-| `entrypoints/popup/` | 扩展弹窗 UI，包含开始/退出游戏和背景模糊设置。 |
+| `entrypoints/popup/` | 扩展弹窗 UI，包含角色选择、开始/退出游戏和背景模糊设置。 |
 | `entrypoints/page-game-overlay.ts` | 注入网页的遮罩层脚本，负责创建 iframe、消息通信、关闭游戏和页面背景处理。 |
 | `entrypoints/game.html` | 游戏页 HTML，既用于独立页，也用于网页遮罩 iframe。 |
 | `src/extension/` | 扩展侧通用逻辑，包括打开游戏、消息类型、背景模糊存储。 |
 | `src/game/` | 游戏主体逻辑、动画、排行榜、DOM 引用、样式和参数配置。 |
+| `src/game/characters.js` | 角色注册表：各角色 SVG 资产、几何参数、选择持久化与热切换。 |
 | `public/icon/` | 扩展图标资源。 |
+
+开发角色时，优先从这些文件入手：
+
+- `src/game/characters.js`：新增/调整角色。每个角色提供身体层与拖影层两张 SVG（手臂组分别带 `data-left-arm` / `data-left-arm-smear` 标记）、几何参数（当前共用同一骨架），以及 id 和名称。选择持久化在 `browser.storage.local`，优先级为 URL `?character=` 参数 > 存储选择 > 默认角色。
+- `entrypoints/popup/main.ts`：调整角色选择区 UI（当前为纯图标卡片，无文字标签）。
+- `src/game/app.js`：角色几何参数的消费方与热切换逻辑（`applyCharacter`）。
 
 开发游戏玩法时，优先从这些文件入手：
 
 - `src/game/config.js`：调整平台距离、跳跃节奏、角色尺寸、尖刺、蓄力条和挑战模式参数。
-- `src/game/clawd-motion.js`：调整 Clawd 的跳跃姿态、拉伸、残影和手臂动画。
+- `src/game/clawd-motion.js`：调整角色的跳跃姿态、拉伸、残影和手臂动画。
 - `src/game/app.js`：处理游戏状态机、输入、碰撞、得分、复活和排行榜弹窗。
 - `src/game/styles.css`：调整舞台、角色、平台、尖刺和游戏结束面板视觉样式。
 
