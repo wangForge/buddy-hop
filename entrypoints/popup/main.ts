@@ -6,6 +6,12 @@ import {
   saveStoredCharacterId,
 } from '../../src/game/characters';
 import {
+  DEFAULT_THEME_ID,
+  THEMES,
+  getStoredThemeId,
+  saveStoredThemeId,
+} from '../../src/game/themes';
+import {
   BACKDROP_BLUR_STEP_PX,
   DEFAULT_BACKDROP_BLUR_PX,
   MAX_BACKDROP_BLUR_PX,
@@ -104,6 +110,25 @@ app.innerHTML = `
           >
             <span class="character-option__preview" aria-hidden="true">${character.bodySvg}</span>
           </button>`).join('')}
+      </div>
+    </section>
+
+    <section class="theme-panel" aria-labelledby="theme-label">
+      <div class="setting-header">
+        <label id="theme-label">主题</label>
+      </div>
+      <div class="theme-grid" role="radiogroup" aria-label="选择主题">
+        ${THEMES.map((theme) => `
+          <button
+            class="theme-option"
+            data-theme="${theme.id}"
+            type="button"
+            role="radio"
+            aria-checked="false"
+            aria-label="${theme.name}"
+            title="${theme.name}"
+            style="background: ${theme.preview}"
+          ></button>`).join('')}
       </div>
     </section>
 
@@ -390,6 +415,40 @@ void getStoredCharacterId()
   .catch((error) => {
     console.warn('Failed to load Buddy Hop character', error);
     setCharacterSelection(DEFAULT_CHARACTER_ID);
+  });
+
+const themeButtons = Array.from(
+  document.querySelectorAll<HTMLButtonElement>('[data-theme]'),
+);
+
+const setThemeSelection = (id: string) => {
+  themeButtons.forEach((button) => {
+    const isActive = button.dataset.theme === id;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-checked', String(isActive));
+  });
+};
+
+themeButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const id = button.dataset.theme;
+
+    if (!id) {
+      return;
+    }
+
+    setThemeSelection(id);
+    void saveStoredThemeId(id).catch((error) => {
+      console.warn('Failed to save Buddy Hop theme', error);
+    });
+  });
+});
+
+void getStoredThemeId()
+  .then(setThemeSelection)
+  .catch((error) => {
+    console.warn('Failed to load Buddy Hop theme', error);
+    setThemeSelection(DEFAULT_THEME_ID);
   });
 
 renderGameControls();

@@ -18,7 +18,6 @@ export default defineConfig({
       default_icon: extensionIcon,
     },
     permissions: ['activeTab', 'scripting', 'storage'],
-    host_permissions: ['https://xletejbcfylwplhnlbjo.supabase.co/*'],
     web_accessible_resources: [
       {
         resources: ['game.html'],

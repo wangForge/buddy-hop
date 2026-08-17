@@ -354,3 +354,38 @@ h1 {
 .character-option__preview .clawd-dead-eyes {
   display: none;
 }
+
+.theme-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.theme-option {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.5 / 1;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  background-size: cover;
+  cursor: pointer;
+}
+
+.theme-option:hover {
+  border-color: #9ca3af;
+}
+
+.theme-option:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+.theme-option.is-active {
+  border-color: #da7756;
+  box-shadow: 0 0 0 2px #da7756;
+}

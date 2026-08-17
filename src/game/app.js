@@ -75,6 +75,13 @@ import {
   watchStoredCharacter,
 } from "./characters.js";
 import {
+  applyTheme,
+  getInitialThemeId,
+  getStoredThemeId,
+  hasExplicitThemeParam,
+  watchStoredTheme,
+} from "./themes.js";
+import {
   clamp,
   clamp01,
   easeOutQuart,
@@ -82,11 +89,6 @@ import {
   lerp,
   pickRandom,
 } from "./math.js";
-import {
-  fetchLeaderboardEntries,
-  upsertLeaderboardEntry,
-  normalizeName,
-} from "./leaderboard.js";
 
 const PAGE_SURFACE_THEMES = new Set(["light", "dark"]);
 const GAME_MODES = new Set(["casual", "challenge"]);
@@ -148,11 +150,7 @@ const {
   bottomSpikesSvg,
   bottomSpikesPath,
   gameOverModal,
-  rankList,
   finalScoreValue,
-  scoreForm,
-  playerNameInput,
-  submitScoreButton,
   retryGameButton,
   exitGameButton,
   platforms,
@@ -238,9 +236,6 @@ const game = {
   respawnStartedAt: 0,
 };
 
-const RANK_VISIBLE_ROWS = 5;
-const RANK_ENTRY_LIMIT = 10;
-const PLAYER_NAME_STORAGE_KEY = "buddy-hop:player-name";
 const CONTROLS_HINT_STORAGE_KEY_PREFIX =
   "buddy-hop:controls-hint-shown";
 
@@ -262,226 +257,6 @@ const claimFirstControlsHintForMode = () => {
 
 let isAwaitingFirstSpace = claimFirstControlsHintForMode();
 controlsHint.hidden = !isAwaitingFirstSpace;
-
-const rankState = {
-  entries: [],
-  highlightedEntryId: null,
-  hasLoaded: false,
-  isLoading: false,
-  isSubmitting: false,
-  hasSubmittedCurrentScore: false,
-  error: null,
-};
-
-let rankLoadId = 0;
-let rankLoadPromise = null;
-
-const getPlayerName = () => playerNameInput.value.trim();
-
-const sortRankEntries = (entries) =>
-  [...entries].sort((a, b) => {
-    if (b.score !== a.score) {
-      return b.score - a.score;
-    }
-
-    return String(a.createdAt ?? "").localeCompare(String(b.createdAt ?? ""));
-  });
-
-const getRankEntries = () =>
-  sortRankEntries(rankState.entries)
-    .slice(0, RANK_ENTRY_LIMIT)
-    .map((entry, index) => ({
-      ...entry,
-      rank: index + 1,
-    }));
-
-const renderRankStatus = (message) => {
-  const row = document.createElement("li");
-  row.className = "game-over__rank-row is-status";
-  row.textContent = message;
-  rankList.append(row);
-};
-
-const updateRankFade = () => {
-  const rows = rankList.querySelectorAll(".game-over__rank-row:not(.is-status)");
-  if (rows.length <= RANK_VISIBLE_ROWS) {
-    rankList.classList.remove("can-scroll-up", "can-scroll-down");
-    return;
-  }
-
-  const atTop = rankList.scrollTop < 2;
-  const atBottom =
-    rankList.scrollTop + rankList.clientHeight >=
-    rankList.scrollHeight - 2;
-
-  rankList.classList.toggle("can-scroll-up", !atTop);
-  rankList.classList.toggle("can-scroll-down", !atBottom);
-};
-
-const renderRankList = () => {
-  rankList.textContent = "";
-
-  const entries = getRankEntries();
-
-  if (entries.length === 0) {
-    renderRankStatus(
-      rankState.isLoading && !rankState.hasLoaded
-        ? "加载中"
-        : rankState.error
-          ? "榜单暂时连不上"
-          : "暂无记录",
-    );
-    return;
-  }
-
-  entries.forEach((entry) => {
-    const row = document.createElement("li");
-    row.className = "game-over__rank-row";
-    row.classList.toggle("is-player", entry.id === rankState.highlightedEntryId);
-
-    const rank = document.createElement("span");
-    rank.className = "game-over__rank-number";
-    rank.textContent = String(entry.rank);
-
-    const name = document.createElement("span");
-    name.className = "game-over__rank-name";
-    name.textContent = entry.name;
-
-    const score = document.createElement("span");
-    score.className = "game-over__rank-score";
-    score.textContent = String(entry.score);
-
-    row.append(rank, name, score);
-    rankList.append(row);
-  });
-
-  updateRankFade();
-};
-
-const updateScoreSubmitState = () => {
-  submitScoreButton.disabled =
-    rankState.isSubmitting ||
-    rankState.hasSubmittedCurrentScore ||
-    getPlayerName().length === 0 ||
-    game.score === 0;
-};
-
-const loadRankEntries = () => {
-  if (rankLoadPromise) {
-    return rankLoadPromise;
-  }
-
-  const loadId = rankLoadId + 1;
-  rankLoadId = loadId;
-  rankState.isLoading = true;
-  rankState.error = null;
-  renderRankList();
-
-  const loadPromise = (async () => {
-    try {
-      const entries = await fetchLeaderboardEntries();
-
-      if (loadId !== rankLoadId) {
-        return;
-      }
-
-      rankState.entries = entries;
-      rankState.hasLoaded = true;
-      rankState.error = null;
-    } catch (error) {
-      if (loadId !== rankLoadId) {
-        return;
-      }
-
-      rankState.error = error;
-      console.warn("Failed to load leaderboard", error);
-    } finally {
-      if (loadId === rankLoadId) {
-        rankState.isLoading = false;
-        renderRankList();
-      }
-
-      if (rankLoadPromise === loadPromise) {
-        rankLoadPromise = null;
-      }
-    }
-  })();
-
-  rankLoadPromise = loadPromise;
-  return loadPromise;
-};
-
-const mergeRankEntry = (entry) => {
-  const entriesById = new Map(rankState.entries.map((item) => [item.id, item]));
-  entriesById.set(entry.id, entry);
-  rankState.entries = sortRankEntries([...entriesById.values()]);
-};
-
-const submitPlayerScore = async () => {
-  if (rankState.hasSubmittedCurrentScore) {
-    return;
-  }
-
-  const name = getPlayerName();
-
-  if (!name) {
-    updateScoreSubmitState();
-    playerNameInput.focus({ preventScroll: true });
-    return;
-  }
-
-  rankState.isSubmitting = true;
-  rankState.error = null;
-  submitScoreButton.classList.remove("is-sent");
-  submitScoreButton.textContent = "提交中";
-  updateScoreSubmitState();
-
-  try {
-    const existingEntry = rankState.entries.find(
-      (entry) => entry.name === normalizeName(name),
-    );
-
-    if (existingEntry && existingEntry.score >= game.score) {
-      rankState.highlightedEntryId = existingEntry.id;
-      rankState.hasSubmittedCurrentScore = true;
-      localStorage.setItem(PLAYER_NAME_STORAGE_KEY, name);
-      renderRankList();
-      submitScoreButton.classList.add("is-sent");
-      submitScoreButton.textContent = "已有更高分";
-      return;
-    }
-
-    const entry = await upsertLeaderboardEntry({
-      name,
-      score: game.score,
-    });
-
-    localStorage.setItem(PLAYER_NAME_STORAGE_KEY, name);
-    rankState.highlightedEntryId = entry.id;
-    rankState.hasSubmittedCurrentScore = true;
-    mergeRankEntry(entry);
-    renderRankList();
-    submitScoreButton.classList.add("is-sent");
-    submitScoreButton.textContent = "已上榜";
-    void loadRankEntries();
-  } catch (error) {
-    rankState.error = error;
-    console.warn("Failed to submit score", error);
-    submitScoreButton.textContent = "重试";
-    renderRankList();
-  } finally {
-    rankState.isSubmitting = false;
-    updateScoreSubmitState();
-  }
-};
-
-const prefetchLeaderboard = () => {
-  if (!isChallengeMode()) {
-    return;
-  }
-
-  void loadRankEntries();
-};
 
 const getStageRect = () => stage.getBoundingClientRect();
 const getVisibleClawdHeight = () => clawdSize.height - clawdSize.bottomPadding;
@@ -726,6 +501,18 @@ const syncStoredCharacter = async () => {
     applyCharacter(getCharacterById(storedId));
   } catch (error) {
     console.warn("Failed to load stored character", error);
+  }
+};
+
+const syncStoredTheme = async () => {
+  if (hasExplicitThemeParam()) {
+    return;
+  }
+
+  try {
+    applyTheme(await getStoredThemeId());
+  } catch (error) {
+    console.warn("Failed to load stored theme", error);
   }
 };
 
@@ -1511,24 +1298,7 @@ const hideChallengeGameOver = () => {
 
 const showChallengeGameOver = () => {
   finalScoreValue.textContent = String(game.score);
-  rankState.highlightedEntryId = null;
-  rankState.hasSubmittedCurrentScore = false;
-  submitScoreButton.classList.remove("is-sent");
-  submitScoreButton.textContent = "上榜👆";
-  const savedName = localStorage.getItem(PLAYER_NAME_STORAGE_KEY);
-  if (savedName) {
-    playerNameInput.value = savedName;
-  }
-  renderRankList();
-  updateScoreSubmitState();
   gameOverModal.hidden = false;
-  void loadRankEntries();
-
-  requestAnimationFrame(() => {
-    if (!gameOverModal.hidden) {
-      playerNameInput.focus({ preventScroll: true });
-    }
-  });
 };
 
 const enterChallengeModeGameOver = ({ now }) => {
@@ -2507,24 +2277,6 @@ window.addEventListener("blur", () => {
   syncHud();
 });
 
-scoreForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  void submitPlayerScore();
-});
-
-rankList.addEventListener("scroll", updateRankFade);
-
-playerNameInput.addEventListener("input", () => {
-  if (rankState.hasSubmittedCurrentScore) {
-    updateScoreSubmitState();
-    return;
-  }
-
-  submitScoreButton.classList.remove("is-sent");
-  submitScoreButton.textContent = "上榜👆";
-  updateScoreSubmitState();
-});
-
 retryGameButton.addEventListener("click", () => {
   resetGame({ now: performance.now() });
 });
@@ -2540,7 +2292,7 @@ updateStageSize();
 renderFrame(performance.now());
 syncAutoPlayUrl();
 postAutoPlayState();
-prefetchLeaderboard();
+applyTheme(getInitialThemeId());
 void syncStoredCharacter();
 watchStoredCharacter((id) => {
   if (hasExplicitCharacterParam()) {
@@ -2548,6 +2300,14 @@ watchStoredCharacter((id) => {
   }
 
   applyCharacter(getCharacterById(id));
+});
+void syncStoredTheme();
+watchStoredTheme((id) => {
+  if (hasExplicitThemeParam()) {
+    return;
+  }
+
+  applyTheme(id);
 });
 frameRequest = requestAnimationFrame(tick);
 

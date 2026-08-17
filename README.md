@@ -7,11 +7,11 @@ Buddy Hop 是一个基于 [WXT](https://wxt.dev/) 的浏览器扩展小游戏，
 ## 特性
 
 - **角色自定义**：内置蟹、机器人、小狗、卡皮巴拉四个角色，在扩展弹窗中一键切换，游戏内即时生效（无需重开游戏）。
-- **双模式**：休闲模式（相机跟随，失败后就近平台复活）与挑战模式（画面持续上移、一失误即结算并可提交排行榜）。
+- **主题场景**：内置星空、赛博朋克、森林三套全屏场景主题（带动态氛围），默认跟随页面明暗；弹窗切换即热生效。
+- **双模式**：休闲模式（相机跟随，失败后就近平台复活）与挑战模式（画面持续上移、一失误即结算）。
 - **双死亡机制**：顶部尖刺与底部尖刺，跳跃力度需要精确把控。
 - **自动 play**：`Ctrl+A` 切换，内置"安全跳跃规划"自动代玩。
 - **页面自适应**：遮罩模式自动采样页面背景亮度，切换明暗主题。
-- **在线排行榜**：挑战模式结束后提交分数，Supabase 云端榜单。
 
 ## 开发环境
 
@@ -65,8 +65,9 @@ npm run zip:firefox
 | `entrypoints/page-game-overlay.ts` | 注入网页的遮罩层脚本，负责创建 iframe、消息通信、关闭游戏和页面背景处理。 |
 | `entrypoints/game.html` | 游戏页 HTML，既用于独立页，也用于网页遮罩 iframe。 |
 | `src/extension/` | 扩展侧通用逻辑，包括打开游戏、消息类型、背景模糊存储。 |
-| `src/game/` | 游戏主体逻辑、动画、排行榜、DOM 引用、样式和参数配置。 |
+| `src/game/` | 游戏主体逻辑、动画、DOM 引用、样式和参数配置。 |
 | `src/game/characters.js` | 角色注册表：各角色 SVG 资产、几何参数、选择持久化与热切换。 |
+| `src/game/themes.js` | 主题注册表：场景 SVG 资产、popup 预览、主题持久化与热切换。 |
 | `public/icon/` | 扩展图标资源。 |
 
 开发角色时，优先从这些文件入手：
@@ -79,7 +80,7 @@ npm run zip:firefox
 
 - `src/game/config.js`：调整平台距离、跳跃节奏、角色尺寸、尖刺、蓄力条和挑战模式参数。
 - `src/game/clawd-motion.js`：调整角色的跳跃姿态、拉伸、残影和手臂动画。
-- `src/game/app.js`：处理游戏状态机、输入、碰撞、得分、复活和排行榜弹窗。
+- `src/game/app.js`：处理游戏状态机、输入、碰撞、得分、复活和游戏结束弹窗。
 - `src/game/styles.css`：调整舞台、角色、平台、尖刺和游戏结束面板视觉样式。
 
 开发扩展能力时，优先从这些文件入手：
@@ -88,12 +89,6 @@ npm run zip:firefox
 - `entrypoints/page-game-overlay.ts`：修改网页注入、遮罩行为、快捷键、iframe 通信和页面背景处理。
 - `entrypoints/popup/main.ts`：修改弹窗按钮、状态和设置项。
 - `wxt.config.ts`：新增权限、host permissions、快捷键或扩展资源。
-
-排行榜逻辑在 `src/game/leaderboard.js`。当前代码使用 Supabase publishable key 直接从浏览器访问 REST API；如果更换 Supabase 项目或表结构，需要同步更新：
-
-- `src/game/leaderboard.js` 中的 REST URL、publishable key 和表字段。
-- `wxt.config.ts` 中的 `host_permissions`。
-- Supabase 端的 RLS/权限策略，确保公开客户端只能执行预期读写操作。
 
 ## Git 与生成文件
 

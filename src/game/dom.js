@@ -23,28 +23,7 @@ clawdSmearElement.innerHTML = initialCharacter.smearSvg;
 clawdVelocityElement.innerHTML = initialCharacter.bodySvg;
 const GAME_OVER_MODAL_CONTENT = `
   <div class="game-over__panel">
-    <section class="game-over__leaderboard" aria-labelledby="game-over-title">
-      <h2 id="game-over-title">\u6392\u884C\u699C</h2>
-      <ol class="game-over__rank-list" data-rank-list></ol>
-    </section>
-    <form class="game-over__submit" data-score-form>
-      <div class="game-over__submit-body">
-        <label class="game-over__field">
-          <input
-            data-player-name
-            type="text"
-            maxlength="24"
-            autocomplete="off"
-            inputmode="text"
-            aria-label="\u8F93\u5165\u4F60\u7684\u5927\u540D"
-          />
-        </label>
-        <strong class="game-over__final-score" data-final-score>0</strong>
-        <button class="game-over__send" data-submit-score type="submit" aria-label="\u4E0A\u699C">
-          \u4E0A\u699C\uD83D\uDC46
-        </button>
-      </div>
-    </form>
+    <strong class="game-over__final-score" data-final-score>0</strong>
     <div class="game-over__actions">
       <button class="game-over__button game-over__button--primary" data-retry-game type="button">
         \u518D\u6765\u4E00\u6B21
@@ -57,11 +36,7 @@ const GAME_OVER_MODAL_CONTENT = `
 `;
 
 const ensureGameOverModalMarkup = (modal) => {
-  if (
-    !modal.querySelector("[data-rank-list]") ||
-    !modal.querySelector("[data-score-form]") ||
-    !modal.querySelector("[data-submit-score]")
-  ) {
+  if (!modal.querySelector("[data-final-score]")) {
     modal.innerHTML = GAME_OVER_MODAL_CONTENT;
   }
 
@@ -119,11 +94,7 @@ export const elements = {
   bottomSpikesSvg: getRequiredElement("[data-bottom-spikes-svg]"),
   bottomSpikesPath: getRequiredElement("[data-bottom-spikes-path]"),
   gameOverModal,
-  rankList: getRequiredChildElement(gameOverModal, "[data-rank-list]"),
   finalScoreValue: getRequiredChildElement(gameOverModal, "[data-final-score]"),
-  scoreForm: getRequiredChildElement(gameOverModal, "[data-score-form]"),
-  playerNameInput: getRequiredChildElement(gameOverModal, "[data-player-name]"),
-  submitScoreButton: getRequiredChildElement(gameOverModal, "[data-submit-score]"),
   retryGameButton: getRequiredChildElement(gameOverModal, "[data-retry-game]"),
   exitGameButton: getRequiredChildElement(gameOverModal, "[data-exit-game]"),
   platforms: Object.fromEntries(

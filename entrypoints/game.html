@@ -9,7 +9,10 @@
   </head>
   <body>
     <main class="app" aria-label="Buddy Hop game">
+      <div class="stage-scene" data-stage-scene aria-hidden="true"></div>
+
       <section class="stage" data-stage aria-label="Buddy Hop game stage">
+
         <div class="score" data-score aria-hidden="true">score: 0</div>
 
         <div class="spikes spikes--top" data-spikes aria-hidden="true">
@@ -60,28 +63,7 @@
           hidden
         >
           <div class="game-over__panel">
-            <section class="game-over__leaderboard" aria-labelledby="game-over-title">
-              <h2 id="game-over-title">排行榜</h2>
-              <ol class="game-over__rank-list" data-rank-list></ol>
-            </section>
-            <form class="game-over__submit" data-score-form>
-              <div class="game-over__submit-body">
-                <label class="game-over__field">
-                  <input
-                    data-player-name
-                    type="text"
-                    maxlength="24"
-                    autocomplete="off"
-                    inputmode="text"
-                    aria-label="输入你的大名"
-                  />
-                </label>
-                <strong class="game-over__final-score" data-final-score>0</strong>
-                <button class="game-over__send" data-submit-score type="submit" aria-label="上榜">
-                  上榜👆
-                </button>
-              </div>
-            </form>
+            <strong class="game-over__final-score" data-final-score>0</strong>
             <div class="game-over__actions">
               <button class="game-over__button game-over__button--primary" data-retry-game type="button">
                 再来一次
