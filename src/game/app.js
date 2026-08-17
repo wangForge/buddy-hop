@@ -1,7 +1,6 @@
 import {
   ANTICIPATION_SCALE_X,
   ARM_MAX_UP_SWING_DEGREES,
-  ARM_PIVOTS,
   ARM_TAKEOFF_DOWN_SWING_DEGREES,
   BASELINE_ANIMATION_FPS,
   BOTTOM_DEATH_DURATION_FRAMES,
@@ -20,12 +19,9 @@ import {
   CHARGE_METER_WIDTH_RATIO,
   CHARGE_MIN_LIFT_RATIO,
   CHARGE_PERFECT_CLEARANCE_RATIO,
-  CLAWD_ASPECT_RATIO,
-  CLAWD_BOTTOM_PADDING_RATIO,
   CLAWD_HEIGHT_RATIO,
   CLAWD_JUMP_TIMING,
   CLAWD_SCENE_SCALE,
-  CLAWD_TOP_PADDING_RATIO,
   CHALLENGE_CURRENT_SURFACE_RATIO,
   CHALLENGE_MODE_CHARGE_INITIAL_SPEED_MULTIPLIER,
   CHALLENGE_MODE_DRIFT_INITIAL_SPEED_RATIO,
@@ -71,7 +67,13 @@ import {
   getTakeoffSmearSpeedFactors,
   getVelocityStretch,
 } from "./clawd-motion.js";
-import { elements, platformIds } from "./dom.js";
+import { elements, initialCharacter, platformIds } from "./dom.js";
+import {
+  getCharacterById,
+  hasExplicitCharacterParam,
+  getStoredCharacterId,
+  watchStoredCharacter,
+} from "./characters.js";
 import {
   clamp,
   clamp01,
@@ -139,13 +141,6 @@ const {
   chargeMeter,
   chargeFill,
   controlsHint,
-  clawdBody,
-  clawdSmear,
-  clawdVelocity,
-  bodyLeftArm,
-  bodyRightArm,
-  smearLeftArm,
-  smearRightArm,
   spikes,
   spikesSvg,
   spikesPath,
@@ -163,6 +158,18 @@ const {
   platforms,
 } = elements;
 
+let {
+  clawdBody,
+  clawdSmear,
+  clawdVelocity,
+  bodyLeftArm,
+  bodyRightArm,
+  smearLeftArm,
+  smearRightArm,
+} = elements;
+
+let activeCharacter = initialCharacter;
+
 let stageSize = { width: 0, height: 0 };
 let platformThickness = 4;
 let platformVisualThickness = 8;
@@ -178,9 +185,9 @@ const challengeModeDrift = {
 
 const clawdSize = {
   height: 150,
-  width: 150 * CLAWD_ASPECT_RATIO,
-  topPadding: 150 * CLAWD_TOP_PADDING_RATIO,
-  bottomPadding: 150 * CLAWD_BOTTOM_PADDING_RATIO,
+  width: 150 * activeCharacter.geometry.aspectRatio,
+  topPadding: 150 * activeCharacter.geometry.topPaddingRatio,
+  bottomPadding: 150 * activeCharacter.geometry.bottomPaddingRatio,
 };
 
 const createPlatformMap = (createValue) =>
@@ -645,13 +652,14 @@ const getChargePowerForLift = (lift) => {
 };
 
 const setArms = (leftArm, rightArm, degrees) => {
+  const { armPivots } = activeCharacter.geometry;
   leftArm.setAttribute(
     "transform",
-    `rotate(${-degrees} ${ARM_PIVOTS.left.x} ${ARM_PIVOTS.left.y})`,
+    `rotate(${-degrees} ${armPivots.left.x} ${armPivots.left.y})`,
   );
   rightArm.setAttribute(
     "transform",
-    `rotate(${degrees} ${ARM_PIVOTS.right.x} ${ARM_PIVOTS.right.y})`,
+    `rotate(${degrees} ${armPivots.right.x} ${armPivots.right.y})`,
   );
 };
 
@@ -673,18 +681,52 @@ const syncMascotSize = () => {
       MAX_CLAWD_HEIGHT,
     ) * CLAWD_SCENE_SCALE,
   );
-  clawdSize.width = clawdSize.height * CLAWD_ASPECT_RATIO;
+  clawdSize.width = clawdSize.height * activeCharacter.geometry.aspectRatio;
   clawdSize.topPadding = Math.round(
-    clawdSize.height * CLAWD_TOP_PADDING_RATIO,
+    clawdSize.height * activeCharacter.geometry.topPaddingRatio,
   );
   clawdSize.bottomPadding = Math.round(
-    clawdSize.height * CLAWD_BOTTOM_PADDING_RATIO,
+    clawdSize.height * activeCharacter.geometry.bottomPaddingRatio,
   );
 
   [clawdBody, clawdSmear].forEach((element) => {
     element.style.width = `${clawdSize.width}px`;
     element.style.height = `${clawdSize.height}px`;
   });
+};
+
+const refreshCharacterElementRefs = () => {
+  bodyLeftArm = clawdBody.querySelector("[data-left-arm]");
+  bodyRightArm = clawdBody.querySelector("[data-right-arm]");
+  smearLeftArm = clawdSmear.querySelector("[data-left-arm-smear]");
+  smearRightArm = clawdSmear.querySelector("[data-right-arm-smear]");
+};
+
+const applyCharacter = (character) => {
+  if (!character || character.id === activeCharacter.id) {
+    return;
+  }
+
+  activeCharacter = character;
+  clawdVelocity.innerHTML = character.bodySvg;
+  clawdSmear.innerHTML = character.smearSvg;
+  refreshCharacterElementRefs();
+  syncMascotSize();
+  syncHud();
+  renderFrame(performance.now());
+};
+
+const syncStoredCharacter = async () => {
+  if (hasExplicitCharacterParam()) {
+    return;
+  }
+
+  try {
+    const storedId = await getStoredCharacterId();
+    applyCharacter(getCharacterById(storedId));
+  } catch (error) {
+    console.warn("Failed to load stored character", error);
+  }
 };
 
 const syncSpikes = () => {
@@ -2499,6 +2541,14 @@ renderFrame(performance.now());
 syncAutoPlayUrl();
 postAutoPlayState();
 prefetchLeaderboard();
+void syncStoredCharacter();
+watchStoredCharacter((id) => {
+  if (hasExplicitCharacterParam()) {
+    return;
+  }
+
+  applyCharacter(getCharacterById(id));
+});
 frameRequest = requestAnimationFrame(tick);
 
 window.addEventListener("beforeunload", () => {

@@ -1,5 +1,11 @@
 import { browser } from 'wxt/browser';
 import {
+  CHARACTERS,
+  DEFAULT_CHARACTER_ID,
+  getStoredCharacterId,
+  saveStoredCharacterId,
+} from '../../src/game/characters';
+import {
   BACKDROP_BLUR_STEP_PX,
   DEFAULT_BACKDROP_BLUR_PX,
   MAX_BACKDROP_BLUR_PX,
@@ -79,6 +85,25 @@ app.innerHTML = `
         <span class="key-combo" aria-label="Escape">
           <kbd>Esc</kbd>
         </span>
+      </div>
+    </section>
+
+    <section class="character-panel" aria-labelledby="character-label">
+      <div class="setting-header">
+        <label id="character-label">角色</label>
+      </div>
+      <div class="character-grid" role="radiogroup" aria-label="选择角色">
+        ${CHARACTERS.map((character) => `
+          <button
+            class="character-option"
+            data-character="${character.id}"
+            type="button"
+            role="radio"
+            aria-checked="false"
+            aria-label="${character.name}"
+          >
+            <span class="character-option__preview" aria-hidden="true">${character.bodySvg}</span>
+          </button>`).join('')}
       </div>
     </section>
 
@@ -332,6 +357,40 @@ exitButton.addEventListener('click', () => {
 });
 
 backdropBlurSlider.addEventListener('input', handleBackdropBlurInput);
+
+const characterButtons = Array.from(
+  document.querySelectorAll<HTMLButtonElement>('[data-character]'),
+);
+
+const setCharacterSelection = (id: string) => {
+  characterButtons.forEach((button) => {
+    const isActive = button.dataset.character === id;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-checked', String(isActive));
+  });
+};
+
+characterButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const id = button.dataset.character;
+
+    if (!id) {
+      return;
+    }
+
+    setCharacterSelection(id);
+    void saveStoredCharacterId(id).catch((error) => {
+      console.warn('Failed to save Jumping Clawd character', error);
+    });
+  });
+});
+
+void getStoredCharacterId()
+  .then(setCharacterSelection)
+  .catch((error) => {
+    console.warn('Failed to load Jumping Clawd character', error);
+    setCharacterSelection(DEFAULT_CHARACTER_ID);
+  });
 
 renderGameControls();
 void syncGameState();

@@ -304,3 +304,53 @@ h1 {
   font-weight: 560;
   line-height: 1.3;
 }
+
+.character-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.character-option {
+  display: grid;
+  padding: 8px 4px;
+  border: 2px solid #d1d5db;
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  align-items: center;
+}
+
+.character-option:hover {
+  border-color: #9ca3af;
+}
+
+.character-option:focus-visible {
+  outline: 2px solid #000000;
+  outline-offset: 2px;
+}
+
+.character-option.is-active {
+  border-color: #da7756;
+  background: #fff7ed;
+}
+
+.character-option__preview {
+  display: block;
+  width: 100%;
+}
+
+.character-option__preview svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.character-option__preview .clawd-dead-eyes {
+  display: none;
+}

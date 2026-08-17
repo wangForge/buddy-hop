@@ -1,3 +1,8 @@
+import {
+  getCharacterById,
+  getInitialCharacterId,
+} from './characters.js';
+
 const getRequiredElement = (selector) => {
   const element = document.querySelector(selector);
 
@@ -10,6 +15,12 @@ const getRequiredElement = (selector) => {
 
 const platformElements = Array.from(document.querySelectorAll("[data-platform]"));
 const stageElement = getRequiredElement("[data-stage]");
+const clawdSmearElement = getRequiredElement("[data-clawd-smear]");
+const clawdVelocityElement = getRequiredElement("[data-clawd-velocity]");
+
+export const initialCharacter = getCharacterById(getInitialCharacterId());
+clawdSmearElement.innerHTML = initialCharacter.smearSvg;
+clawdVelocityElement.innerHTML = initialCharacter.bodySvg;
 const GAME_OVER_MODAL_CONTENT = `
   <div class="game-over__panel">
     <section class="game-over__leaderboard" aria-labelledby="game-over-title">
