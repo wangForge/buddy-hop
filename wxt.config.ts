@@ -22,6 +22,11 @@ export default defineConfig({
       {
         resources: ['game.html'],
         matches: ['<all_urls>'],
+        // Only the overlay content script needs to frame game.html, and it
+        // resolves the URL through `browser.runtime.getURL`, which returns the
+        // per-session dynamic URL. Keeping a dynamic URL stops arbitrary sites
+        // from guessing a stable address and embedding the game page.
+        use_dynamic_url: true,
       },
     ],
     commands: {

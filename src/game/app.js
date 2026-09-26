@@ -2069,8 +2069,44 @@ const updateStageSize = () => {
   renderFrame(performance.now());
 };
 
+// Standalone pages are opened by navigating a tab to the runtime game URL, so
+// leaving the game means navigating that same tab back to a blank page — which
+// is exactly what `closeGameInActiveTab` does from the extension side. The
+// `tabs` API is used directly (as with `chrome.storage` in characters.js)
+// because this module runs as a plain ES module inside game.html.
+const STANDALONE_EXIT_URL = "about:blank";
+
+const getExtensionTabsApi = () =>
+  typeof chrome === "undefined" ? undefined : chrome.tabs;
+
+const closeStandaloneGamePage = () => {
+  const tabs = getExtensionTabsApi();
+
+  if (
+    typeof tabs?.getCurrent !== "function" ||
+    typeof tabs.update !== "function"
+  ) {
+    window.close();
+    return;
+  }
+
+  tabs.getCurrent((tab) => {
+    if (chrome.runtime.lastError || tab?.id == null) {
+      window.close();
+      return;
+    }
+
+    tabs.update(tab.id, { url: STANDALONE_EXIT_URL }, () => {
+      if (chrome.runtime.lastError) {
+        window.close();
+      }
+    });
+  });
+};
+
 const requestOverlayClose = () => {
   if (window.parent === window) {
+    closeStandaloneGamePage();
     return;
   }
 
